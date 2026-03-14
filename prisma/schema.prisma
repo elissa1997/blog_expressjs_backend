@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model article {
+  id        Int       @id @default(autoincrement())
+  title     String    @default("unknow")
+  cover     String?
+  content   String    @db.Text
+  category  Int       @default(0)
+  status    Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  comment   comment[]
+}
+
+model comment {
+  id        Int      @id @default(autoincrement())
+  a_id      Int
+  parent_id Int?
+  is_regist Int      @default(0)
+  user_name String   @default("unknow")
+  email     String   @default("unknow")
+  url       String?
+  ip        String   @default("127.0.0.1")
+  text      String?  @db.Text
+  status    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  agent     String   @default("unknow")
+  article   article  @relation(fields: [a_id], references: [id], onDelete: Cascade)
+  parent    comment? @relation("comment_children", fields: [parent_id], references: [id], onDelete: Cascade)
+  children  comment[] @relation("comment_children")
+
+  @@index([a_id], map: "comment_a_id_fkey")
+}
+
+model dict {
+  id        Int      @id @default(autoincrement())
+  dict_type String   @default("unknow")
+  name      String   @default("unknow")
+  value     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model othercomment {
+  id        Int      @id @default(autoincrement())
+  type      Int      @default(0)
+  parent_id Int?
+  is_regist Int      @default(0)
+  user_name String   @default("unknow")
+  email     String   @default("unknow")
+  url       String?
+  ip        String   @default("127.0.0.1")
+  agent     String   @default("unknow")
+  text      String?  @db.Text
+  status    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  parent    othercomment?  @relation("othercomment_children", fields: [parent_id], references: [id], onDelete: Cascade)
+  children  othercomment[] @relation("othercomment_children")
+}
+
+model user {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  password  String
+  email     String   @unique
+  admin     Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
