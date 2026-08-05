@@ -35,6 +35,12 @@
   - `GET /othercomment/admin-list`（需登录）
   - `POST /othercomment/update`（需登录）
   - `POST /othercomment/delete`（需登录）
+- Friendlink
+  - `POST /friendlink/add`（游客提交，含七牛文本审核）
+  - `GET /friendlink/list`（仅返回已通过链接）
+  - `GET /friendlink/admin-list`（需登录）
+  - `POST /friendlink/update`（需登录）
+  - `POST /friendlink/delete`（需登录）
 - Dict
   - `GET /dict/list`（需登录）
   - `GET /dict/findbytype`
@@ -95,11 +101,21 @@ npx prisma generate
 
 4. 配置服务参数
 
-编辑 `src/config/index.js`：
+开发环境复制 `src/config/config.dev.example.js` 为 `src/config/config.dev.js`；生产环境复制
+`src/config/config.prod.example.js` 为 `src/config/config.prod.js`。生产配置中的数据库和 JWT
+可以通过 Compose 环境变量提供，七牛凭据直接填写在对应环境的 config 文件中。
+
+可配置项包括：
 
 - `port`：服务端口（默认 `3000`）
+- `trustProxy`：可信反向代理层数；本地直连设为 `false`，生产环境单层 Nginx 设为 `1`
+- `rateLimit.enabled`：是否启用游客提交限流
+- `rateLimit.comment`：评论和其他评论共享的限流窗口及次数
+- `rateLimit.friendlink`：友情链接提交的限流窗口及次数
 - `jwt.secret` / `jwt.expiresIn`：JWT 配置
-- `qiniu.accessKey` / `qiniu.secretKey`：七牛内容审核（可留空，留空则自动跳过审核）
+- `qiniu.accessKey` / `qiniu.secretKey`：七牛内容审核。评论接口未配置时跳过审核；友情链接提交接口未配置时返回 `502` 且不入库。
+
+使用 `docker-compose.example.yml` 部署时，应先复制为 `docker-compose.yml` 并填写其中的环境变量。
 
 5. 启动服务
 
@@ -131,10 +147,18 @@ Authorization: Bearer <token>
   - `offset`：页码（从 1 开始）
   - `limits`：每页条数
 
+## 友情链接接口说明
+
+- 游客提交字段：`name`（1-100 字符）和 `url`（仅支持 HTTP/HTTPS，最长 2048 字符）。
+- 七牛文本审核结果为 `pass` 或 `review` 时入库，初始状态均为 `0`（待审核）；`block` 时拒绝入库。
+- 状态值：`0` 待审核、`1` 已通过、`2` 已拒绝。
+- 后台列表的 `search` 支持 `name`、`url`、`status`、`qiniuSuggestion`。
+- `sort` 数值越大，公开列表中的排序越靠前。
+- 七牛仅审核站点名称；URL 只进行 HTTP/HTTPS 格式校验和重复检查，不抓取目标网页。
+
 
 ## 开发说明
 
 - 项目采用分层结构：`routes -> controllers -> services -> models`
 - 数据库访问集中在 `models` 层（通过 Prisma）
 - 全局中间件包括日志、统一响应和错误处理
-

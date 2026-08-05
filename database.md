@@ -3,7 +3,7 @@
 ## 概览
 - 数据库：MySQL
 - ORM：Prisma
-- 表数量：5（article、comment、dict、othercomment、user）
+- 表数量：6（article、comment、dict、friendlink、othercomment、user）
 
 ## 表：article
 | 字段 | 类型 | 主键 | 非空 | 默认值 | 说明 |
@@ -87,3 +87,22 @@
 唯一约束：
 - `user.name` 唯一
 - `user.email` 唯一
+
+## 表：friendlink
+| 字段 | 类型 | 主键 | 非空 | 默认值 | 说明 |
+|---|---|---|---|---|---|
+| id | Int | 是 | 是 | autoincrement() | 友情链接 ID |
+| name | String(@db.VarChar(100)) | 否 | 是 | 无 | 站点名称 |
+| url | String(@db.VarChar(2048)) | 否 | 是 | 无 | 规范化后的站点 URL |
+| urlHash | String(@db.Char(64)) | 否 | 是 | 无 | URL SHA-256 唯一摘要 |
+| status | Int | 否 | 是 | 0 | 0 待审核、1 已通过、2 已拒绝 |
+| qiniuSuggestion | String(@db.VarChar(16)) | 否 | 是 | 无 | 七牛文本审核结果 |
+| sort | Int | 否 | 是 | 0 | 展示排序，数值越大越靠前 |
+| ip | String(@db.VarChar(45)) | 否 | 是 | "127.0.0.1" | 提交者 IP |
+| agent | String(@db.VarChar(512)) | 否 | 是 | "unknow" | 提交者 UA |
+| createdAt | DateTime | 否 | 是 | now() | 创建时间 |
+| updatedAt | DateTime | 否 | 是 | @updatedAt | 更新时间 |
+
+索引：
+- `urlHash` 唯一索引，用于防止规范化后的 URL 重复提交。
+- `(status, sort)` 普通索引，用于公开列表查询和排序。
