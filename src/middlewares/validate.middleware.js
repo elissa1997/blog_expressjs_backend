@@ -38,6 +38,15 @@ const typeCheckers = {
   string(value) {
     return typeof value === 'string' && value.trim() !== '';
   },
+  url(value) {
+    if (typeof value !== 'string' || value.trim() === '') return false;
+    try {
+      const parsed = new URL(value.trim());
+      return ['http:', 'https:'].includes(parsed.protocol) && Boolean(parsed.hostname);
+    } catch (err) {
+      return false;
+    }
+  },
   int(value) {
     return isIntLike(value);
   },
@@ -75,6 +84,31 @@ function validateFields(data, fields) {
 
     if (!checker(value)) {
       errors.push(`${field.name} 类型必须为 ${field.type}`);
+      continue;
+    }
+
+    if (typeof value === 'string') {
+      const length = value.trim().length;
+      if (field.minLength !== undefined && length < field.minLength) {
+        errors.push(`${field.name} 长度不能少于 ${field.minLength}`);
+      }
+      if (field.maxLength !== undefined && length > field.maxLength) {
+        errors.push(`${field.name} 长度不能超过 ${field.maxLength}`);
+      }
+    }
+
+    if (field.allowedValues && !field.allowedValues.some((item) => String(item) === String(value).trim())) {
+      errors.push(`${field.name} 必须为 ${field.allowedValues.join('/')}`);
+    }
+
+    if (field.type === 'int') {
+      const parsed = Number.parseInt(value, 10);
+      if (field.minValue !== undefined && parsed < field.minValue) {
+        errors.push(`${field.name} 不能小于 ${field.minValue}`);
+      }
+      if (field.maxValue !== undefined && parsed > field.maxValue) {
+        errors.push(`${field.name} 不能大于 ${field.maxValue}`);
+      }
     }
   }
 
@@ -82,11 +116,15 @@ function validateFields(data, fields) {
 }
 
 function validateParams(options) {
-  const { source = 'body', fields = [] } = options;
+  const { source = 'body', fields = [], atLeastOne = [] } = options;
 
   return function validateParamsMiddleware(req, res, next) {
     const data = req[source] || {};
     const errors = validateFields(data, fields);
+
+    if (atLeastOne.length > 0 && atLeastOne.every((name) => isEmptyValue(data[name]))) {
+      errors.push(`至少需要提供一个字段: ${atLeastOne.join('/')}`);
+    }
 
     if (errors.length > 0) {
       return next(createValidationError(`参数校验失败: ${errors.join('; ')}`));
