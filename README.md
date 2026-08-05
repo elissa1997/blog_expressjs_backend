@@ -85,8 +85,8 @@ npm install
 2. 配置服务参数
 
 开发环境复制 `src/config/config.dev.example.js` 为 `src/config/config.dev.js`；生产环境复制
-`src/config/config.prod.example.js` 为 `src/config/config.prod.js`。生产配置中的数据库和 JWT
-可以通过 Compose 环境变量提供，七牛凭据直接填写在对应环境的 config 文件中。
+`src/config/config.prod.example.js` 为 `src/config/config.prod.js`。数据库、JWT 和七牛配置均直接
+填写在对应环境的 config 文件中；Compose 通过 `NODE_ENV` 决定应用加载开发配置还是生产配置。
 
 可配置项包括：
 
@@ -99,7 +99,7 @@ npm install
 - `jwt.secret` / `jwt.expiresIn`：JWT 配置
 - `qiniu.accessKey` / `qiniu.secretKey`：七牛内容审核。评论接口未配置时跳过审核；友情链接提交接口未配置时返回 `502` 且不入库。
 
-使用 `docker-compose.example.yml` 部署时，应先复制为 `docker-compose.yml` 并填写其中的环境变量。
+使用 `docker-compose.example.yml` 部署时，应先复制为 `docker-compose.yml`。
 
 3. 生成 Prisma Client
 

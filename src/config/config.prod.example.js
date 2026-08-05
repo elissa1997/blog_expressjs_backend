@@ -12,9 +12,9 @@ module.exports = {
       limit: 2
     }
   },
-  databaseUrl: process.env.DATABASE_URL,
+  databaseUrl: "mysql://user:password@服务器线上ip:3366/blog",
   jwt: {
-    secret: process.env.JWT_SECRET,
+    secret: "your_jwt_secret",
     expiresIn: '1d'
   },
   qiniu: {

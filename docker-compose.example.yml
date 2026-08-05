@@ -12,7 +12,3 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-
-      DATABASE_URL: mysql://user:password@服务器线上ip:3366/blog
-
-      JWT_SECRET: your_jwt_secret
