@@ -76,3 +76,19 @@ model user {
   createdAt DateTime @default(now())
   updatedAt DateTime
 }
+
+model friendlink {
+  id              Int      @id @default(autoincrement())
+  name            String   @db.VarChar(100)
+  url             String   @db.VarChar(2048)
+  urlHash         String   @unique @db.Char(64)
+  status          Int      @default(0)
+  qiniuSuggestion String   @db.VarChar(16)
+  sort            Int      @default(0)
+  ip              String   @default("127.0.0.1") @db.VarChar(45)
+  agent           String   @default("unknow") @db.VarChar(512)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status, sort])
+}

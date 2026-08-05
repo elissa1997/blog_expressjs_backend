@@ -121,6 +121,43 @@ const routeValidationMap = {
       { name: 'status', type: 'int', required: true }
     ]
   },
+  'POST /friendlink/add': {
+    source: 'body',
+    fields: [
+      { name: 'name', type: 'string', required: true, minLength: 1, maxLength: 100 },
+      { name: 'url', type: 'url', required: true, maxLength: 2048 }
+    ]
+  },
+  'GET /friendlink/list': {
+    source: 'query',
+    fields: [
+      { name: 'offset', type: 'int', required: true, minValue: 1 },
+      { name: 'limits', type: 'int', required: true, minValue: 1, maxValue: 100 }
+    ]
+  },
+  'GET /friendlink/admin-list': {
+    source: 'query',
+    fields: [
+      { name: 'offset', type: 'int', required: true, minValue: 1 },
+      { name: 'limits', type: 'int', required: true, minValue: 1, maxValue: 100 },
+      { name: 'search', type: 'string', required: false }
+    ]
+  },
+  'POST /friendlink/update': {
+    source: 'body',
+    atLeastOne: ['name', 'url', 'status', 'sort'],
+    fields: [
+      { name: 'id', type: 'int', required: true, minValue: 1 },
+      { name: 'name', type: 'string', required: false, minLength: 1, maxLength: 100 },
+      { name: 'url', type: 'url', required: false, maxLength: 2048 },
+      { name: 'status', type: 'int', required: false, allowedValues: [0, 1, 2] },
+      { name: 'sort', type: 'int', required: false }
+    ]
+  },
+  'POST /friendlink/delete': {
+    source: 'body',
+    fields: [{ name: 'id', type: 'array[int]', required: true }]
+  },
   'GET /dict/list': {
     source: 'query',
     fields: [
