@@ -16,6 +16,3 @@ services:
       DATABASE_URL: mysql://user:password@服务器线上ip:3366/blog
 
       JWT_SECRET: your_jwt_secret
-
-      QINIU_AK: 七牛云ak
-      QINIU_SK: 七牛云sk
