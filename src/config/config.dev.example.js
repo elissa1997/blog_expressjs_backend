@@ -1,5 +1,17 @@
 module.exports = {
   port: 3000,
+  trustProxy: false,
+  rateLimit: {
+    enabled: true,
+    comment: {
+      windowMinutes: 5,
+      limit: 10
+    },
+    friendlink: {
+      windowMinutes: 30,
+      limit: 2
+    }
+  },
   databaseUrl: "mysql://user:password@localhost:3366/blog",
   jwt: {
     secret: "your_jwt_secret",

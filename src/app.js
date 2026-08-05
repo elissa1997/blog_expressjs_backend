@@ -8,6 +8,7 @@ const loggerMiddleware = require('./middlewares/logger.middleware');
 
 const app = express();
 
+app.set('trust proxy', config.trustProxy);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
