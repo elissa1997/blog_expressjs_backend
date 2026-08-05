@@ -8,7 +8,7 @@ RUN npm install --production
 
 COPY . .
 
-RUN DATABASE_URL="mysql://user:pass@127.0.0.1:3306/placeholder" npx prisma generate
+RUN npx prisma generate
 
 EXPOSE 3000
 

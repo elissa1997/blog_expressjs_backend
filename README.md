@@ -74,24 +74,18 @@
 - Node.js 18+（建议）
 - MySQL 8+（建议）
 
-## 安装与启动
+## 配置加载流程
 
-1. 安装依赖
+- 未设置 `NODE_ENV` 时默认加载 `src/config/config.dev.js`。
+- `NODE_ENV=production` 时加载 `src/config/config.prod.js`。
+- `src/config/db.js` 在加载 Prisma Client 前读取当前 config 的 `databaseUrl`，并在外部未设置
+  `DATABASE_URL` 时将其提供给 Prisma。
+- JWT、七牛和限流等其他配置由对应模块直接从当前 config 读取。
 
-```bash
-npm install
-```
-
-2. 配置服务参数
-
-开发环境复制 `src/config/config.dev.example.js` 为 `src/config/config.dev.js`；生产环境复制
-`src/config/config.prod.example.js` 为 `src/config/config.prod.js`。数据库、JWT 和七牛配置均直接
-填写在对应环境的 config 文件中；Compose 通过 `NODE_ENV` 决定应用加载开发配置还是生产配置。
-
-可配置项包括：
+主要配置项包括：
 
 - `port`：服务端口（默认 `3000`）
-- `databaseUrl`：数据库连接地址；应用启动时会将其提供给 Prisma
+- `databaseUrl`：数据库连接地址
 - `trustProxy`：可信反向代理层数；本地直连设为 `false`，生产环境单层 Nginx 设为 `1`
 - `rateLimit.enabled`：是否启用游客提交限流
 - `rateLimit.comment`：评论和其他评论共享的限流窗口及次数
@@ -99,36 +93,25 @@ npm install
 - `jwt.secret` / `jwt.expiresIn`：JWT 配置
 - `qiniu.accessKey` / `qiniu.secretKey`：七牛内容审核。评论接口未配置时跳过审核；友情链接提交接口未配置时返回 `502` 且不入库。
 
-使用 `docker-compose.example.yml` 部署时，应先复制为 `docker-compose.yml`。
+## 本地开发
 
-3. 生成 Prisma Client（本地开发）
+1. 复制 `src/config/config.dev.example.js` 为 `src/config/config.dev.js`，并填写开发环境配置。
+2. 执行 `npm install`。`@prisma/client` 的安装钩子会自动生成 Prisma Client，无需设置临时数据库地址。
+3. 后续修改 `prisma/schema.prisma` 时，直接执行 `npx prisma generate` 重新生成 Client。
+4. 执行 `npm start` 启动服务，默认地址为 `http://localhost:3000`。
 
-本地首次安装或修改 `prisma/schema.prisma` 后，需要重新生成 Prisma Client。生成过程不连接
-数据库，也不会把连接地址写入 Client，因此可以使用临时占位地址：
+Windows 下重新生成 Client 前应先停止正在运行的 Node 服务，避免查询引擎 DLL 被占用。
 
-```bash
-DATABASE_URL="mysql://user:pass@127.0.0.1:3306/placeholder" npx prisma generate
-```
+## Docker 部署
 
-PowerShell 执行完成后应清除临时变量：
+1. 复制 `src/config/config.prod.example.js` 为 `src/config/config.prod.js`，并填写生产环境配置。
+2. 复制 `docker-compose.example.yml` 为 `docker-compose.yml`。
+3. 执行 `docker compose up -d --build` 构建并启动服务。
 
-```powershell
-$env:DATABASE_URL="mysql://user:pass@127.0.0.1:3306/placeholder"
-npx prisma generate
-Remove-Item Env:DATABASE_URL
-```
-
-使用 Docker 或 Compose 部署时无需手动执行这一步，Dockerfile 已在镜像构建期间使用临时
-占位地址生成 Prisma Client。该变量不会保留到容器运行阶段；应用启动时，`config/db.js`
-会在加载 Prisma Client 前将当前环境配置中的 `databaseUrl` 提供给 Prisma。
-
-4. 启动服务
-
-```bash
-npm start
-```
-
-启动后默认地址：`http://localhost:3000`
+Dockerfile 安装依赖时项目 Schema 尚未复制进镜像，因此会在复制源码后显式执行
+`npx prisma generate`。生成阶段不连接数据库，也不需要 `DATABASE_URL`；容器启动后，Compose
+设置的 `NODE_ENV=production` 会让应用加载生产 config，数据库模块再将其中的 `databaseUrl`
+提供给 Prisma。
 
 ## 接口约定
 
