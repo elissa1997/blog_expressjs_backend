@@ -82,24 +82,7 @@
 npm install
 ```
 
-2. 配置数据库连接
-
-编辑 `prisma/schema.prisma` 中 `datasource db.url`，例如：
-
-```prisma
-datasource db {
-  provider = "mysql"
-  url      = "mysql://root:password@localhost:3306/blog"
-}
-```
-
-3. 生成 Prisma Client
-
-```bash
-npx prisma generate
-```
-
-4. 配置服务参数
+2. 配置服务参数
 
 开发环境复制 `src/config/config.dev.example.js` 为 `src/config/config.dev.js`；生产环境复制
 `src/config/config.prod.example.js` 为 `src/config/config.prod.js`。生产配置中的数据库和 JWT
@@ -108,6 +91,7 @@ npx prisma generate
 可配置项包括：
 
 - `port`：服务端口（默认 `3000`）
+- `databaseUrl`：数据库连接地址；应用启动时会将其提供给 Prisma
 - `trustProxy`：可信反向代理层数；本地直连设为 `false`，生产环境单层 Nginx 设为 `1`
 - `rateLimit.enabled`：是否启用游客提交限流
 - `rateLimit.comment`：评论和其他评论共享的限流窗口及次数
@@ -117,7 +101,23 @@ npx prisma generate
 
 使用 `docker-compose.example.yml` 部署时，应先复制为 `docker-compose.yml` 并填写其中的环境变量。
 
-5. 启动服务
+3. 生成 Prisma Client
+
+应用运行时会从当前环境的 config 读取 `databaseUrl`，无需修改 `prisma/schema.prisma`。
+Prisma CLI 不会加载应用 config，因此执行 CLI 命令时需要临时提供相同的 `DATABASE_URL`：
+
+```bash
+DATABASE_URL="mysql://user:password@localhost:3366/blog" npx prisma generate
+```
+
+PowerShell 可先执行：
+
+```powershell
+$env:DATABASE_URL="mysql://user:password@localhost:3366/blog"
+npx prisma generate
+```
+
+4. 启动服务
 
 ```bash
 npm start
