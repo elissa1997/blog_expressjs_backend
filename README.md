@@ -101,21 +101,26 @@ npm install
 
 使用 `docker-compose.example.yml` 部署时，应先复制为 `docker-compose.yml`。
 
-3. 生成 Prisma Client
+3. 生成 Prisma Client（本地开发）
 
-应用运行时会从当前环境的 config 读取 `databaseUrl`，无需修改 `prisma/schema.prisma`。
-Prisma CLI 不会加载应用 config，因此执行 CLI 命令时需要临时提供相同的 `DATABASE_URL`：
+本地首次安装或修改 `prisma/schema.prisma` 后，需要重新生成 Prisma Client。生成过程不连接
+数据库，也不会把连接地址写入 Client，因此可以使用临时占位地址：
 
 ```bash
-DATABASE_URL="mysql://user:password@localhost:3366/blog" npx prisma generate
+DATABASE_URL="mysql://user:pass@127.0.0.1:3306/placeholder" npx prisma generate
 ```
 
-PowerShell 可先执行：
+PowerShell 执行完成后应清除临时变量：
 
 ```powershell
-$env:DATABASE_URL="mysql://user:password@localhost:3366/blog"
+$env:DATABASE_URL="mysql://user:pass@127.0.0.1:3306/placeholder"
 npx prisma generate
+Remove-Item Env:DATABASE_URL
 ```
+
+使用 Docker 或 Compose 部署时无需手动执行这一步，Dockerfile 已在镜像构建期间使用临时
+占位地址生成 Prisma Client。该变量不会保留到容器运行阶段；应用启动时，`config/db.js`
+会在加载 Prisma Client 前将当前环境配置中的 `databaseUrl` 提供给 Prisma。
 
 4. 启动服务
 
