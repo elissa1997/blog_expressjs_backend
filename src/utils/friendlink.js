@@ -14,37 +14,39 @@ function normalizeName(value) {
   return name;
 }
 
+function isValidFriendlinkUrl(value) {
+  if (typeof value !== 'string') return false;
+
+  const input = value.trim();
+  const rootHttpsPattern = /^https:\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}\/$/i;
+  if (!rootHttpsPattern.test(input)) return false;
+
+  try {
+    const parsed = new URL(input);
+    return parsed.protocol === 'https:' &&
+      parsed.hostname.length <= 253 &&
+      parsed.pathname === '/' &&
+      !parsed.port &&
+      !parsed.search &&
+      !parsed.hash &&
+      !parsed.username &&
+      !parsed.password;
+  } catch (err) {
+    return false;
+  }
+}
+
 function normalizeUrl(value) {
   const input = typeof value === 'string' ? value.trim() : '';
-  if (!input || input.length > 2048) {
-    throw validationError('URL 长度必须为 1-2048 个字符');
+  if (!isValidFriendlinkUrl(input)) {
+    throw validationError('URL 必须为 https://主域名或二级域名/ 格式');
   }
 
-  let parsed;
-  try {
-    parsed = new URL(input);
-  } catch (err) {
-    throw validationError('URL 格式不正确');
-  }
-
-  if (!['http:', 'https:'].includes(parsed.protocol)) {
-    throw validationError('URL 仅支持 http 或 https 协议');
-  }
-
-  if (!parsed.hostname || parsed.username || parsed.password) {
-    throw validationError('URL 格式不正确');
-  }
-
-  parsed.hash = '';
-  const normalized = parsed.toString();
-  if (normalized.length > 2048) {
-    throw validationError('URL 长度不能超过 2048 个字符');
-  }
-  return normalized;
+  return new URL(input).toString();
 }
 
 function hashUrl(url) {
   return crypto.createHash('sha256').update(url).digest('hex');
 }
 
-module.exports = { normalizeName, normalizeUrl, hashUrl };
+module.exports = { normalizeName, isValidFriendlinkUrl, normalizeUrl, hashUrl };

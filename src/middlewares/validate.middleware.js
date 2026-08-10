@@ -1,4 +1,5 @@
 const routeValidationMap = require('../validators/route-validation.map');
+const { isValidFriendlinkUrl } = require('../utils/friendlink');
 
 function createValidationError(message) {
   const error = new Error(message);
@@ -38,14 +39,8 @@ const typeCheckers = {
   string(value) {
     return typeof value === 'string' && value.trim() !== '';
   },
-  url(value) {
-    if (typeof value !== 'string' || value.trim() === '') return false;
-    try {
-      const parsed = new URL(value.trim());
-      return ['http:', 'https:'].includes(parsed.protocol) && Boolean(parsed.hostname);
-    } catch (err) {
-      return false;
-    }
+  friendlinkUrl(value) {
+    return isValidFriendlinkUrl(value);
   },
   int(value) {
     return isIntLike(value);
@@ -83,7 +78,7 @@ function validateFields(data, fields) {
     }
 
     if (!checker(value)) {
-      errors.push(`${field.name} 类型必须为 ${field.type}`);
+      errors.push(field.typeMessage || `${field.name} 类型必须为 ${field.type}`);
       continue;
     }
 

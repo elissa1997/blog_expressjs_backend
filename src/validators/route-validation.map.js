@@ -125,7 +125,13 @@ const routeValidationMap = {
     source: 'body',
     fields: [
       { name: 'name', type: 'string', required: true, minLength: 1, maxLength: 100 },
-      { name: 'url', type: 'url', required: true, maxLength: 2048 }
+      {
+        name: 'url',
+        type: 'friendlinkUrl',
+        required: true,
+        maxLength: 2048,
+        typeMessage: 'url 必须为 https://主域名或二级域名/ 格式'
+      }
     ]
   },
   'GET /friendlink/list': {
@@ -149,7 +155,13 @@ const routeValidationMap = {
     fields: [
       { name: 'id', type: 'int', required: true, minValue: 1 },
       { name: 'name', type: 'string', required: false, minLength: 1, maxLength: 100 },
-      { name: 'url', type: 'url', required: false, maxLength: 2048 },
+      {
+        name: 'url',
+        type: 'friendlinkUrl',
+        required: false,
+        maxLength: 2048,
+        typeMessage: 'url 必须为 https://主域名或二级域名/ 格式'
+      },
       { name: 'status', type: 'int', required: false, allowedValues: [0, 1, 2] },
       { name: 'sort', type: 'int', required: false }
     ]

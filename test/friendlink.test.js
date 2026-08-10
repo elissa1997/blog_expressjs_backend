@@ -1,18 +1,34 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeName, normalizeUrl, hashUrl } = require('../src/utils/friendlink');
+const { normalizeName, isValidFriendlinkUrl, normalizeUrl, hashUrl } = require('../src/utils/friendlink');
 const { resolveSuggestion } = require('../src/services/friendlink.service');
 
-test('normalizes names and equivalent root URLs', () => {
+test('accepts main domains and subdomains with an HTTPS root URL', () => {
   assert.equal(normalizeName('  示例站点  '), '示例站点');
-  assert.equal(normalizeUrl('HTTPS://Example.COM:443#about'), 'https://example.com/');
-  assert.equal(hashUrl(normalizeUrl('https://example.com')), hashUrl(normalizeUrl('HTTPS://EXAMPLE.COM:443#x')));
+  assert.equal(normalizeUrl('https://Example.COM/'), 'https://example.com/');
+  assert.equal(normalizeUrl('https://blog.example.com/'), 'https://blog.example.com/');
+  assert.equal(normalizeUrl('https://news.blog.example.co.uk/'), 'https://news.blog.example.co.uk/');
+  assert.equal(hashUrl(normalizeUrl('https://EXAMPLE.COM/')), hashUrl(normalizeUrl('https://example.com/')));
 });
 
-test('rejects unsafe or invalid URLs', () => {
-  assert.throws(() => normalizeUrl('ftp://example.com'), /仅支持 http 或 https/);
-  assert.throws(() => normalizeUrl('https://user:pass@example.com'), /格式不正确/);
-  assert.throws(() => normalizeUrl('not-a-url'), /格式不正确/);
+test('rejects URLs outside the strict HTTPS root-domain format', () => {
+  const invalidUrls = [
+    'http://example.com/',
+    'https://example.com',
+    'https://example.com/path',
+    'https://example.com/?page=1',
+    'https://example.com/#about',
+    'https://example.com:8443/',
+    'https://user:pass@example.com/',
+    'https://localhost/',
+    'https://127.0.0.1/',
+    'not-a-url'
+  ];
+
+  for (const url of invalidUrls) {
+    assert.equal(isValidFriendlinkUrl(url), false, url);
+    assert.throws(() => normalizeUrl(url), /必须为 https:\/\/主域名或二级域名\/ 格式/);
+  }
 });
 
 test('accepts pass and review suggestions for pending friendlinks', () => {
