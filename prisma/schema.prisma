@@ -49,24 +49,6 @@ model dict {
   updatedAt DateTime
 }
 
-model othercomment {
-  id        Int      @id @default(autoincrement())
-  type      Int      @default(0)
-  parent_id Int?
-  is_regist Int      @default(0)
-  user_name String   @default("unknow")
-  email     String   @default("unknow")
-  url       String?
-  ip        String   @default("127.0.0.1")
-  agent     String   @default("unknow")
-  text      String?  @db.Text
-  status    Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  parent    othercomment?  @relation("othercomment_children", fields: [parent_id], references: [id], onDelete: Cascade)
-  children  othercomment[] @relation("othercomment_children")
-}
-
 model user {
   id        Int      @id @default(autoincrement())
   name      String   @unique

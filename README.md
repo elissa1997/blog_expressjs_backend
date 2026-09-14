@@ -1,6 +1,6 @@
 # blog_expressjs_backend
 
-基于 `Node.js + Express + Prisma + MySQL + JWT` 的博客后端服务，包含用户认证、文章管理、评论管理、其他评论模块和字典管理模块。
+基于 `Node.js + Express + Prisma + MySQL + JWT` 的博客后端服务，包含用户认证、文章管理、评论管理、友情链接和字典管理模块。
 
 ## 技术栈
 
@@ -29,12 +29,6 @@
   - `GET /comment/admin-list`（需登录）
   - `POST /comment/update`（需登录）
   - `POST /comment/delete`（需登录）
-- OtherComment
-  - `POST /othercomment/add`（含七牛文本审核）
-  - `GET /othercomment/list`
-  - `GET /othercomment/admin-list`（需登录）
-  - `POST /othercomment/update`（需登录）
-  - `POST /othercomment/delete`（需登录）
 - Friendlink
   - `POST /friendlink/add`（游客提交，含七牛文本审核）
   - `GET /friendlink/list`（仅返回已通过链接）
@@ -88,7 +82,7 @@
 - `databaseUrl`：数据库连接地址
 - `trustProxy`：可信反向代理层数；本地直连设为 `false`，生产环境单层 Nginx 设为 `1`
 - `rateLimit.enabled`：是否启用游客提交限流
-- `rateLimit.comment`：评论和其他评论共享的限流窗口及次数
+- `rateLimit.comment`：评论提交的限流窗口及次数
 - `rateLimit.friendlink`：友情链接提交的限流窗口及次数
 - `jwt.secret` / `jwt.expiresIn`：JWT 配置
 - `qiniu.accessKey` / `qiniu.secretKey`：七牛内容审核。评论接口未配置时跳过审核；友情链接提交接口未配置时返回 `502` 且不入库。

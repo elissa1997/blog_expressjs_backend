@@ -3,7 +3,7 @@
 ## 概览
 - 数据库：MySQL
 - ORM：Prisma
-- 表数量：6（article、comment、dict、friendlink、othercomment、user）
+- 表数量：5（article、comment、dict、friendlink、user）
 
 ## 表：article
 | 字段 | 类型 | 主键 | 非空 | 默认值 | 说明 |
@@ -52,26 +52,6 @@
 | value | Int | 否 | 是 | 0 | 数值 |
 | createdAt | DateTime | 否 | 是 | now() | 创建时间 |
 | updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
-
-## 表：othercomment
-| 字段 | 类型 | 主键 | 非空 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| id | Int | 是 | 是 | autoincrement() | 评论 ID |
-| type | Int | 否 | 是 | 0 | 评论类型 |
-| parent_id | Int? | 否 | 否 | 无 | 父评论 ID（自关联） |
-| is_regist | Int | 否 | 是 | 0 | 是否注册用户 |
-| user_name | String | 否 | 是 | "unknow" | 用户名 |
-| email | String | 否 | 是 | "unknow" | 邮箱 |
-| url | String? | 否 | 否 | 无 | URL |
-| ip | String | 否 | 是 | "127.0.0.1" | IP |
-| agent | String | 否 | 是 | "unknow" | UA |
-| text | String?(@db.Text) | 否 | 否 | 无 | 评论内容 |
-| status | Int | 否 | 是 | 0 | 状态 |
-| createdAt | DateTime | 否 | 是 | now() | 创建时间 |
-| updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
-
-关系：
-- 自关联：`parent_id -> othercomment.id`（级联删除）
 
 ## 表：user
 | 字段 | 类型 | 主键 | 非空 | 默认值 | 说明 |

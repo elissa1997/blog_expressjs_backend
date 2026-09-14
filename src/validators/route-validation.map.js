@@ -82,45 +82,6 @@ const routeValidationMap = {
       { name: 'status', type: 'int', required: true }
     ]
   },
-  'POST /othercomment/add': {
-    source: 'body',
-    fields: [
-      { name: 'type', type: 'int', required: true },
-      { name: 'parent_id', type: 'int', required: true },
-      { name: 'is_regist', type: 'int', required: true },
-      { name: 'user_name', type: 'string', required: true },
-      { name: 'email', type: 'string', required: true },
-      { name: 'url', type: 'string', required: false },
-      { name: 'text', type: 'string', required: true }
-    ]
-  },
-  'GET /othercomment/list': {
-    source: 'query',
-    fields: [
-      { name: 'offset', type: 'int', required: true },
-      { name: 'limits', type: 'int', required: true },
-      { name: 'type', type: 'int', required: true }
-    ]
-  },
-  'GET /othercomment/admin-list': {
-    source: 'query',
-    fields: [
-      { name: 'offset', type: 'int', required: true },
-      { name: 'limits', type: 'int', required: true },
-      { name: 'search', type: 'string', required: false }
-    ]
-  },
-  'POST /othercomment/delete': {
-    source: 'body',
-    fields: [{ name: 'id', type: 'array[int]', required: true }]
-  },
-  'POST /othercomment/update': {
-    source: 'body',
-    fields: [
-      { name: 'id', type: 'int', required: true },
-      { name: 'status', type: 'int', required: true }
-    ]
-  },
   'POST /friendlink/add': {
     source: 'body',
     fields: [
