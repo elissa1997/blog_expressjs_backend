@@ -1,5 +1,5 @@
 ﻿const userModel = require('../models/user.model');
-const { hashPassword, comparePassword } = require('../utils/bcrypt');
+const { comparePassword } = require('../utils/bcrypt');
 const { signToken } = require('../utils/jwt');
 
 function stripPassword(user) {
@@ -9,30 +9,6 @@ function stripPassword(user) {
 
   const { password, ...rest } = user;
   return rest;
-}
-
-async function register(payload) {
-  if (!payload || !payload.name || !payload.password || !payload.email) {
-    const error = new Error('用户名、密码和邮箱不能为空');
-    error.status = 400;
-    throw error;
-  }
-
-  const hashed = await hashPassword(payload.password);
-  try {
-    const created = await userModel.create({
-      ...payload,
-      password: hashed
-    });
-    return stripPassword(created);
-  } catch (err) {
-    if (err && err.code === 'P2002') {
-      const error = new Error('用户名或邮箱已存在');
-      error.status = 409;
-      throw error;
-    }
-    throw err;
-  }
 }
 
 async function login(payload) {
@@ -72,7 +48,6 @@ async function info(payload) {
 }
 
 module.exports = {
-  register,
   login,
   info
 };

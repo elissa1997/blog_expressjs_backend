@@ -14,9 +14,14 @@
 ## 功能模块
 
 - Auth
-  - `POST /auth/register`
   - `POST /auth/login`
   - `GET /auth/info`（需登录）
+- User（均需管理员权限）
+  - `GET /user/list`
+  - `GET /user/detail`
+  - `POST /user/add`
+  - `POST /user/update`
+  - `POST /user/delete`
 - Article
   - `GET /article/list`
   - `GET /article/detail`
@@ -128,6 +133,15 @@ Authorization: Bearer <token>
 - 分页参数（常见列表接口）：
   - `offset`：页码（从 1 开始）
   - `limits`：每页条数
+
+## 用户管理接口说明
+
+- 所有用户管理接口都需要 Bearer Token，且数据库中的当前用户必须为 `admin=1`。
+- 新增用户字段：`name`、`password`、`email`、`admin`；`admin` 必须由调用方明确传 `0` 或 `1`。
+- 更新用户时 `id` 必填，`name`、`password`、`email`、`admin` 至少传一个。
+- 删除用户时 `id` 为整数数组，且不允许删除当前登录用户。
+- 列表的 `search` 可传普通关键词（同时匹配用户名和邮箱），也可传 JSON 字符串并按 `name`、`email`、`admin` 筛选。
+- 密码写入前使用 bcrypt 哈希，用户接口不会返回密码字段。
 
 ## 友情链接接口说明
 

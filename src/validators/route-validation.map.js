@@ -6,6 +6,42 @@ const routeValidationMap = {
       { name: 'password', type: 'string', required: true }
     ]
   },
+  'GET /user/list': {
+    source: 'query',
+    fields: [
+      { name: 'offset', type: 'int', required: true, minValue: 1 },
+      { name: 'limits', type: 'int', required: true, minValue: 1, maxValue: 100 },
+      { name: 'search', type: 'string', required: false }
+    ]
+  },
+  'GET /user/detail': {
+    source: 'query',
+    fields: [{ name: 'id', type: 'int', required: true, minValue: 1 }]
+  },
+  'POST /user/add': {
+    source: 'body',
+    fields: [
+      { name: 'name', type: 'string', required: true, minLength: 1, maxLength: 191 },
+      { name: 'password', type: 'string', required: true, minLength: 6, maxLength: 72 },
+      { name: 'email', type: 'email', required: true, maxLength: 191 },
+      { name: 'admin', type: 'int', required: true, allowedValues: [0, 1] }
+    ]
+  },
+  'POST /user/update': {
+    source: 'body',
+    atLeastOne: ['name', 'password', 'email', 'admin'],
+    fields: [
+      { name: 'id', type: 'int', required: true, minValue: 1 },
+      { name: 'name', type: 'string', required: false, minLength: 1, maxLength: 191 },
+      { name: 'password', type: 'string', required: false, minLength: 6, maxLength: 72 },
+      { name: 'email', type: 'email', required: false, maxLength: 191 },
+      { name: 'admin', type: 'int', required: false, allowedValues: [0, 1] }
+    ]
+  },
+  'POST /user/delete': {
+    source: 'body',
+    fields: [{ name: 'id', type: 'array[int]', required: true }]
+  },
   'GET /article/list': {
     source: 'query',
     fields: [

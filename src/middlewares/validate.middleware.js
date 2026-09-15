@@ -39,6 +39,9 @@ const typeCheckers = {
   string(value) {
     return typeof value === 'string' && value.trim() !== '';
   },
+  email(value) {
+    return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  },
   friendlinkUrl(value) {
     return isValidFriendlinkUrl(value);
   },
