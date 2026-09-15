@@ -8,7 +8,7 @@ async function adminMiddleware(req, res, next) {
       return res.fail('登录用户不存在，请重新登录', 401);
     }
 
-    if (user.admin !== 1) {
+    if (user.role !== '1') {
       return res.fail('无权进行用户管理', 403);
     }
 

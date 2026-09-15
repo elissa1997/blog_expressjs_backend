@@ -29,7 +29,7 @@ async function login(payload) {
   const token = signToken({
     id: user.id,
     name: user.name,
-    admin: user.admin
+    role: user.role
   });
 
   return {

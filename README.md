@@ -149,11 +149,11 @@ Authorization: Bearer <token>
 
 ## 用户管理接口说明
 
-- 所有用户管理接口都需要 Bearer Token，且数据库中的当前用户必须为 `admin=1`。
-- 新增用户字段：`name`、`password`、`email`、`admin`；`admin` 必须由调用方明确传 `0` 或 `1`。
-- 更新用户时 `id` 必填，`name`、`password`、`email`、`admin` 至少传一个。
+- 所有用户管理接口都需要 Bearer Token，且数据库中的当前用户必须为 `role="1"`。
+- 新增用户字段：`name`、`password`、`email`、`role`；`role` 必须由调用方明确传入非空字符串，可使用任意字典值，其中 `"1"` 表示管理员。
+- 更新用户时 `id` 必填，`name`、`password`、`email`、`role` 至少传一个。
 - 删除用户时 `id` 为整数数组，且不允许删除当前登录用户。
-- 列表的 `search` 可传普通关键词（同时匹配用户名和邮箱），也可传 JSON 字符串并按 `name`、`email`、`admin` 筛选。
+- 列表的 `search` 可传普通关键词（同时匹配用户名和邮箱），也可传 JSON 字符串并按 `name`、`email`、`role` 筛选。
 - 密码写入前使用 bcrypt 哈希，用户接口不会返回密码字段。
 
 ## 友情链接接口说明

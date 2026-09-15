@@ -24,18 +24,18 @@ const routeValidationMap = {
       { name: 'name', type: 'string', required: true, minLength: 1, maxLength: 191 },
       { name: 'password', type: 'string', required: true, minLength: 6, maxLength: 72 },
       { name: 'email', type: 'email', required: true, maxLength: 191 },
-      { name: 'admin', type: 'int', required: true, allowedValues: [0, 1] }
+      { name: 'role', type: 'string', required: true, minLength: 1, maxLength: 191 }
     ]
   },
   'POST /user/update': {
     source: 'body',
-    atLeastOne: ['name', 'password', 'email', 'admin'],
+    atLeastOne: ['name', 'password', 'email', 'role'],
     fields: [
       { name: 'id', type: 'int', required: true, minValue: 1 },
       { name: 'name', type: 'string', required: false, minLength: 1, maxLength: 191 },
       { name: 'password', type: 'string', required: false, minLength: 6, maxLength: 72 },
       { name: 'email', type: 'email', required: false, maxLength: 191 },
-      { name: 'admin', type: 'int', required: false, allowedValues: [0, 1] }
+      { name: 'role', type: 'string', required: false, minLength: 1, maxLength: 191 }
     ]
   },
   'POST /user/delete': {

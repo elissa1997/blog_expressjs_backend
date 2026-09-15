@@ -61,7 +61,7 @@
 | name | String | 否 | 是 | 无 | 用户名（唯一） |
 | password | String | 否 | 是 | 无 | 密码哈希 |
 | email | String | 否 | 是 | 无 | 邮箱（唯一） |
-| admin | Int | 否 | 是 | 1 | 管理员标记 |
+| role | String(@db.VarChar(191)) | 否 | 是 | "1" | 角色值（`"1"` 为管理员） |
 | createdAt | DateTime | 否 | 是 | now() | 创建时间 |
 | updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
 

@@ -4,7 +4,7 @@ const publicSelect = {
   id: true,
   name: true,
   email: true,
-  admin: true,
+  role: true,
   createdAt: true,
   updatedAt: true
 };
@@ -27,8 +27,8 @@ function buildSearchWhere(search) {
     where.email = { contains: search.email };
   }
 
-  if (search.admin !== undefined && search.admin !== null && search.admin !== '') {
-    where.admin = Number.parseInt(search.admin, 10);
+  if (search.role !== undefined && search.role !== null && search.role !== '') {
+    where.role = String(search.role).trim();
   }
 
   return where;
@@ -39,7 +39,7 @@ async function create(payload) {
     name: payload.name,
     password: payload.password,
     email: payload.email,
-    admin: Number.parseInt(payload.admin, 10),
+    role: payload.role.trim(),
     updatedAt: new Date()
   };
 
@@ -90,8 +90,8 @@ async function update(payload) {
     }
   }
 
-  if (payload.admin !== undefined) {
-    data.admin = Number.parseInt(payload.admin, 10);
+  if (payload.role !== undefined) {
+    data.role = payload.role.trim();
   }
 
   return prisma.user.update({

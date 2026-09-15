@@ -55,7 +55,7 @@ model user {
   name      String   @unique
   password  String
   email     String   @unique
-  admin     Int      @default(1)
+  role      String   @default("1") @db.VarChar(191)
   createdAt DateTime @default(now())
   updatedAt DateTime
 }
