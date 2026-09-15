@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { CONTENT_STATUS } = require('../constants/content-status');
 
 function buildSearchWhere(search) {
   const where = {};
@@ -18,8 +19,11 @@ function buildSearchWhere(search) {
   return where;
 }
 
-async function list({ offset, limits, search }) {
-  const where = buildSearchWhere(search || {});
+async function queryList({ offset, limits, search }, forcedWhere = {}) {
+  const where = {
+    ...buildSearchWhere(search || {}),
+    ...forcedWhere
+  };
   const [total, list] = await Promise.all([
     prisma.article.count({ where }),
     prisma.article.findMany({
@@ -43,7 +47,31 @@ async function list({ offset, limits, search }) {
   return { list, total };
 }
 
+async function list(params) {
+  return queryList(params, { status: CONTENT_STATUS.PASS });
+}
+
+async function adminList(params) {
+  return queryList(params);
+}
+
 async function detail({ id }) {
+  return prisma.article.findFirst({
+    where: { id, status: CONTENT_STATUS.PASS },
+    select: {
+      id: true,
+      title: true,
+      cover: true,
+      content: true,
+      category: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true
+    }
+  });
+}
+
+async function adminDetail({ id }) {
   return prisma.article.findUnique({
     where: { id },
     select: {
@@ -64,7 +92,7 @@ async function add(payload) {
   const cover = payload.cover || null;
   const content = payload.content;
   const category = payload.category ? payload.category.trim() : '0';
-  const status = payload.status ? payload.status.trim() : '0';
+  const status = payload.status ? payload.status.trim() : CONTENT_STATUS.HIDE;
 
   const created = await prisma.article.create({
     data: {
@@ -134,7 +162,9 @@ async function remove({ ids }) {
 
 module.exports = {
   list,
+  adminList,
   detail,
+  adminDetail,
   add,
   update,
   remove

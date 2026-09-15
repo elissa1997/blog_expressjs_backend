@@ -1,5 +1,6 @@
 const prisma = require('../config/db');
 const { parsePagination, formatPagination, toDbOffset } = require('../utils/pagination');
+const { CONTENT_STATUS, CONTENT_STATUS_VALUES } = require('../constants/content-status');
 
 function parseSearch(search) {
   if (!search) return {};
@@ -23,6 +24,11 @@ function buildAdminWhere(search) {
       error.status = 400;
       throw error;
     }
+    if (!CONTENT_STATUS_VALUES.includes(search.status.trim())) {
+      const error = new Error(`search.status 必须为 ${CONTENT_STATUS_VALUES.join('/')}`);
+      error.status = 400;
+      throw error;
+    }
     where.status = search.status.trim();
   }
   if (search.qiniuSuggestion) where.qiniuSuggestion = search.qiniuSuggestion;
@@ -43,7 +49,7 @@ async function add(data) {
 
 async function list(query) {
   const { offset, limits } = parsePagination(query);
-  const where = { status: '1' };
+  const where = { status: CONTENT_STATUS.PASS };
   const [total, list] = await Promise.all([
     prisma.friendlink.count({ where }),
     prisma.friendlink.findMany({

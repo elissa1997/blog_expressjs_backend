@@ -1,5 +1,6 @@
 const prisma = require('../config/db');
 const { parsePagination, formatPagination, toDbOffset } = require('../utils/pagination');
+const { CONTENT_STATUS } = require('../constants/content-status');
 
 function parseSearch(search) {
   if (!search) {
@@ -68,7 +69,7 @@ async function add(payload) {
       url: payload.url || null,
       ip: payload.ip || '127.0.0.1',
       text: payload.text || null,
-      status: payload.qiniuSuggestion === 'review' ? '0' : '1',
+      status: payload.qiniuSuggestion === 'review' ? CONTENT_STATUS.HIDE : CONTENT_STATUS.PASS,
       agent: payload.agent || 'unknow',
       qiniuSuggestion: payload.qiniuSuggestion || 'pass',
       updatedAt: new Date()
@@ -86,7 +87,7 @@ async function collectTreeIds(rootIds) {
     const children = await prisma.comment.findMany({
       where: {
         parent_id: { in: parentIds },
-        status: '1'
+        status: CONTENT_STATUS.PASS
       },
       select: { id: true }
     });
@@ -113,7 +114,7 @@ async function fetchTreeListByRootIds(rootIds) {
   return prisma.comment.findMany({
     where: {
       id: { in: treeIds },
-      status: '1'
+      status: CONTENT_STATUS.PASS
     },
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }]
   });
@@ -125,7 +126,7 @@ async function list(query) {
   const where = {
     a_id: articleId,
     parent_id: null,
-    status: '1'
+    status: CONTENT_STATUS.PASS
   };
 
   const [total, roots] = await Promise.all([

@@ -23,8 +23,10 @@
   - `POST /user/update`
   - `POST /user/delete`
 - Article
-  - `GET /article/list`
-  - `GET /article/detail`
+  - `GET /article/list`（仅返回 `pass` 状态）
+  - `GET /article/detail`（仅返回 `pass` 状态）
+  - `GET /article/admin-list`（需登录，可查询全部状态）
+  - `GET /article/admin-detail`（需登录，可查询全部状态）
   - `POST /article/add`（需登录）
   - `POST /article/update`（需登录）
   - `POST /article/delete`（需登录）
@@ -140,11 +142,18 @@ Authorization: Bearer <token>
 - 写入前会移除 `value` 首尾的空白字符，同一 `dict_type` 下不允许出现重复的 `value`。
 - 字典列表按 `value` 的字符串顺序排列；例如 `"10"` 会排在 `"2"` 前面。
 - 所有引用字典值的业务字段统一使用字符串，包括文章的 `category/status`、评论的 `status`、友情链接的 `status` 和用户的 `role`；接口不兼容数字入参。
+- 文章、评论和友情链接的状态统一为 `pass`（公开展示）或 `hide`（隐藏/待审核）。
+
+## 文章接口说明
+
+- 新增文章未传 `status` 时默认为 `hide`。
+- 公开列表和详情接口强制只查询 `pass`，不会因传入搜索状态而暴露隐藏文章。
+- 后台列表和详情接口需要 Bearer Token；后台列表不传状态时返回全部，也可在 `search` 中按 `pass` 或 `hide` 筛选。
 
 ## 评论接口说明
 
 - 评论写入时会同步保存七牛文本审核建议 `qiniuSuggestion`，取值为 `pass`、`review` 或 `block`。
-- `pass` 入库并直接发布（`status="1"`）；`review` 入库等待人工审核（`status="0"`，前台不可见）；`block` 拒绝提交且不入库。
+- `pass` 入库并直接发布（`status="pass"`）；`review` 入库等待人工审核（`status="hide"`，前台不可见）；`block` 拒绝提交且不入库。
 - 未配置七牛时沿用原有放行策略，并记录为 `pass`。
 - 历史评论统一迁移为 `pass`，后台列表的 `search` 支持按 `qiniuSuggestion` 精确筛选。
 
@@ -160,8 +169,8 @@ Authorization: Bearer <token>
 ## 友情链接接口说明
 
 - 游客提交字段：`name`（1-100 字符）和 `url`。URL 必须是 `https://主域名/` 或 `https://二级域名/` 形式，不允许端口、路径、查询参数或锚点。
-- 七牛文本审核结果为 `pass` 或 `review` 时入库，初始状态均为 `0`（待审核）；`block` 时拒绝入库。
-- 状态值：`"0"` 待审核、`"1"` 已通过、`"2"` 已拒绝。
+- 七牛文本审核结果为 `pass` 或 `review` 时入库，初始状态均为 `hide`（待审核）；`block` 时拒绝入库。
+- 状态值：`pass` 公开展示、`hide` 隐藏或等待审核。
 - 后台列表的 `search` 支持 `name`、`url`、`status`、`qiniuSuggestion`。
 - `sort` 数值越大，公开列表中的排序越靠前。
 - 七牛仅审核站点名称；URL 只进行 HTTPS 根域名格式校验和重复检查，不抓取目标网页。

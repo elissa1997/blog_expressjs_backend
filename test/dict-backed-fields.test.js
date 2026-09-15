@@ -19,17 +19,20 @@ test('dict-backed request fields require strings', () => {
     title: '标题',
     content: '内容',
     category: '1',
-    status: '1'
+    status: 'pass'
   };
   assert.equal(validate('POST /article/add', article), undefined);
   assert.match(validate('POST /article/add', { ...article, category: 1 }).message, /category 类型必须为 string/);
   assert.match(validate('POST /article/add', { ...article, status: 1 }).message, /status 类型必须为 string/);
+  assert.match(validate('POST /article/add', { ...article, status: '1' }).message, /status 必须为 pass\/hide/);
 
-  assert.equal(validate('POST /comment/update', { id: 1, status: '1' }), undefined);
+  assert.equal(validate('POST /comment/update', { id: 1, status: 'hide' }), undefined);
   assert.match(validate('POST /comment/update', { id: 1, status: 1 }).message, /status 类型必须为 string/);
+  assert.match(validate('POST /comment/update', { id: 1, status: '0' }).message, /status 必须为 pass\/hide/);
 
-  assert.equal(validate('POST /friendlink/update', { id: 1, status: '2' }), undefined);
+  assert.equal(validate('POST /friendlink/update', { id: 1, status: 'pass' }), undefined);
   assert.match(validate('POST /friendlink/update', { id: 1, status: 2 }).message, /status 类型必须为 string/);
+  assert.match(validate('POST /friendlink/update', { id: 1, status: '2' }).message, /status 必须为 pass\/hide/);
 });
 
 test('numeric status and category search values are rejected', async () => {
@@ -45,6 +48,18 @@ test('numeric status and category search values are rejected', async () => {
     friendlinkModel.adminList({ offset: 1, limits: 10, search: '{"status":1}' }),
     { status: 400, message: 'search.status 类型必须为 string' }
   );
+  await assert.rejects(
+    articleService.adminList({ offset: 1, limits: 10, search: '{"status":"1"}' }),
+    { status: 400, message: 'search.status 必须为 pass/hide' }
+  );
+  await assert.rejects(
+    commentService.adminList({ offset: 1, limits: 10, search: '{"status":"0"}' }),
+    { status: 400, message: 'search.status 必须为 pass/hide' }
+  );
+  await assert.rejects(
+    friendlinkModel.adminList({ offset: 1, limits: 10, search: '{"status":"2"}' }),
+    { status: 400, message: 'search.status 必须为 pass/hide' }
+  );
 });
 
 test('friendlink updates persist status as a string', async () => {
@@ -58,8 +73,8 @@ test('friendlink updates persist status as a string', async () => {
   };
 
   try {
-    assert.equal(await friendlinkService.update({ id: 1, status: '2' }), true);
-    assert.equal(updatedData.status, '2');
+    assert.equal(await friendlinkService.update({ id: 1, status: 'hide' }), true);
+    assert.equal(updatedData.status, 'hide');
   } finally {
     friendlinkModel.findById = originalFindById;
     friendlinkModel.update = originalUpdate;

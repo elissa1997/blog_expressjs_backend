@@ -1,5 +1,6 @@
 const articleModel = require('../models/article.model');
 const { parsePagination, formatPagination, toDbOffset } = require('../utils/pagination');
+const { CONTENT_STATUS_VALUES } = require('../constants/content-status');
 
 function parseSearch(search) {
   if (!search) {
@@ -18,6 +19,11 @@ function parseSearch(search) {
         error.status = 400;
         throw error;
       }
+    }
+    if (parsed.status !== undefined && !CONTENT_STATUS_VALUES.includes(parsed.status.trim())) {
+      const error = new Error(`search.status 必须为 ${CONTENT_STATUS_VALUES.join('/')}`);
+      error.status = 400;
+      throw error;
     }
     return parsed;
   } catch (err) {
@@ -38,8 +44,20 @@ async function list(query) {
   return formatPagination(result.list, result.total, offset, limits);
 }
 
+async function adminList(query) {
+  const { offset, limits } = parsePagination(query);
+  const search = parseSearch(query.search);
+  const dbOffset = toDbOffset(offset, limits);
+  const result = await articleModel.adminList({ offset: dbOffset, limits, search });
+  return formatPagination(result.list, result.total, offset, limits);
+}
+
 async function detail(query) {
   return articleModel.detail({ id: Number.parseInt(query.a_id, 10) });
+}
+
+async function adminDetail(query) {
+  return articleModel.adminDetail({ id: Number.parseInt(query.a_id, 10) });
 }
 
 async function add(payload) {
@@ -86,7 +104,9 @@ async function remove(payload) {
 
 module.exports = {
   list,
+  adminList,
   detail,
+  adminDetail,
   add,
   update,
   remove

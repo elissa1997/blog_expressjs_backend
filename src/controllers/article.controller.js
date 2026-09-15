@@ -9,9 +9,27 @@ async function list(req, res, next) {
   }
 }
 
+async function adminList(req, res, next) {
+  try {
+    const result = await articleService.adminList(req.query);
+    return res.success(result);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 async function detail(req, res, next) {
   try {
     const result = await articleService.detail(req.query);
+    return res.success(result);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+async function adminDetail(req, res, next) {
+  try {
+    const result = await articleService.adminDetail(req.query);
     return res.success(result);
   } catch (err) {
     return next(err);
@@ -47,7 +65,9 @@ async function remove(req, res, next) {
 
 module.exports = {
   list,
+  adminList,
   detail,
+  adminDetail,
   add,
   update,
   remove

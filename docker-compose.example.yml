@@ -3,7 +3,7 @@ version: "3.8"
 services:
   blog-backend:
     build: .
-    image: blog-backend:1.2.2
+    image: blog-backend:1.2.3
     container_name: blog-backend
     restart: always
 

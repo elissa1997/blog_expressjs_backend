@@ -1,5 +1,6 @@
 ﻿const commentModel = require('../models/comment.model');
 const { parsePagination } = require('../utils/pagination');
+const { CONTENT_STATUS_VALUES } = require('../constants/content-status');
 
 function parseSearch(search) {
   if (!search) {
@@ -14,6 +15,11 @@ function parseSearch(search) {
     const parsed = JSON.parse(search);
     if (parsed.status !== undefined && typeof parsed.status !== 'string') {
       const error = new Error('search.status 类型必须为 string');
+      error.status = 400;
+      throw error;
+    }
+    if (parsed.status !== undefined && !CONTENT_STATUS_VALUES.includes(parsed.status.trim())) {
+      const error = new Error(`search.status 必须为 ${CONTENT_STATUS_VALUES.join('/')}`);
       error.status = 400;
       throw error;
     }

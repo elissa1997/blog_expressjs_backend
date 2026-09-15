@@ -1,3 +1,5 @@
+const { CONTENT_STATUS_VALUES } = require('../constants/content-status');
+
 const routeValidationMap = {
   'POST /auth/login': {
     source: 'body',
@@ -54,6 +56,18 @@ const routeValidationMap = {
     source: 'query',
     fields: [{ name: 'a_id', type: 'int', required: true }]
   },
+  'GET /article/admin-list': {
+    source: 'query',
+    fields: [
+      { name: 'offset', type: 'int', required: true },
+      { name: 'limits', type: 'int', required: true },
+      { name: 'search', type: 'string', required: false }
+    ]
+  },
+  'GET /article/admin-detail': {
+    source: 'query',
+    fields: [{ name: 'a_id', type: 'int', required: true }]
+  },
   'POST /article/add': {
     source: 'body',
     fields: [
@@ -61,7 +75,7 @@ const routeValidationMap = {
       { name: 'content', type: 'string', required: true },
       { name: 'cover', type: 'string', required: false },
       { name: 'category', type: 'string', required: false, minLength: 1, maxLength: 191 },
-      { name: 'status', type: 'string', required: false, minLength: 1, maxLength: 191 }
+      { name: 'status', type: 'string', required: false, allowedValues: CONTENT_STATUS_VALUES }
     ]
   },
   'POST /article/update': {
@@ -72,7 +86,7 @@ const routeValidationMap = {
       { name: 'content', type: 'string', required: false },
       { name: 'cover', type: 'string', required: false },
       { name: 'category', type: 'string', required: false, minLength: 1, maxLength: 191 },
-      { name: 'status', type: 'string', required: false, minLength: 1, maxLength: 191 }
+      { name: 'status', type: 'string', required: false, allowedValues: CONTENT_STATUS_VALUES }
     ]
   },
   'POST /article/delete': {
@@ -115,7 +129,7 @@ const routeValidationMap = {
     source: 'body',
     fields: [
       { name: 'id', type: 'int', required: true },
-      { name: 'status', type: 'string', required: true, minLength: 1, maxLength: 191 }
+      { name: 'status', type: 'string', required: true, allowedValues: CONTENT_STATUS_VALUES }
     ]
   },
   'POST /friendlink/add': {
@@ -159,7 +173,7 @@ const routeValidationMap = {
         maxLength: 2048,
         typeMessage: 'url 必须为 https://主域名或二级域名/ 格式'
       },
-      { name: 'status', type: 'string', required: false, allowedValues: ['0', '1', '2'] },
+      { name: 'status', type: 'string', required: false, allowedValues: CONTENT_STATUS_VALUES },
       { name: 'sort', type: 'int', required: false }
     ]
   },

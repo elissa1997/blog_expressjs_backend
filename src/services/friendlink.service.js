@@ -1,6 +1,7 @@
 const friendlinkModel = require('../models/friendlink.model');
 const { reviewText, pickSuggestion } = require('../utils/qiniu-text-review');
 const { normalizeName, normalizeUrl, hashUrl } = require('../utils/friendlink');
+const { CONTENT_STATUS, CONTENT_STATUS_VALUES } = require('../constants/content-status');
 
 function createError(message, status) {
   const error = new Error(message);
@@ -36,7 +37,7 @@ async function add(payload) {
       name,
       url,
       urlHash,
-      status: '0',
+      status: CONTENT_STATUS.HIDE,
       qiniuSuggestion,
       sort: 0,
       ip: payload.ip || '127.0.0.1',
@@ -69,7 +70,7 @@ async function update(payload) {
   if (payload.name !== undefined) data.name = normalizeName(payload.name);
   if (payload.status !== undefined) {
     const status = payload.status.trim();
-    if (!['0', '1', '2'].includes(status)) throw createError('友情链接状态不正确', 400);
+    if (!CONTENT_STATUS_VALUES.includes(status)) throw createError('友情链接状态不正确', 400);
     data.status = status;
   }
   if (payload.sort !== undefined) {

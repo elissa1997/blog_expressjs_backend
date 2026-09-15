@@ -121,7 +121,7 @@ test('comment model persists qiniuSuggestion', async () => {
       qiniuSuggestion: 'pass'
     }), true);
     assert.equal(createdData.qiniuSuggestion, 'pass');
-    assert.equal(createdData.status, '1');
+    assert.equal(createdData.status, 'pass');
 
     assert.equal(await commentModel.add({
       a_id: 1,
@@ -133,7 +133,7 @@ test('comment model persists qiniuSuggestion', async () => {
       qiniuSuggestion: 'review'
     }), true);
     assert.equal(createdData.qiniuSuggestion, 'review');
-    assert.equal(createdData.status, '0');
+    assert.equal(createdData.status, 'hide');
   } finally {
     prisma.comment.create = originalCreate;
   }
