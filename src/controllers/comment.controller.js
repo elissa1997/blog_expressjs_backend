@@ -24,7 +24,8 @@ async function add(req, res, next) {
     const payload = {
       ...req.body,
       ip: extractClientIp(req),
-      agent: req.headers['user-agent'] || 'unknow'
+      agent: req.headers['user-agent'] || 'unknow',
+      qiniuSuggestion: req.qiniuSuggestion || 'pass'
     };
     const result = await commentService.add(payload);
     return res.success(result);

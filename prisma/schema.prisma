@@ -33,6 +33,7 @@ model comment {
   createdAt DateTime @default(now())
   updatedAt DateTime
   agent     String   @default("unknow")
+  qiniuSuggestion String @default("pass") @db.VarChar(16)
   article   article  @relation(fields: [a_id], references: [id], onDelete: Cascade)
   parent    comment? @relation("comment_children", fields: [parent_id], references: [id], onDelete: Cascade)
   children  comment[] @relation("comment_children")

@@ -140,6 +140,13 @@ Authorization: Bearer <token>
 - 写入前会移除 `value` 首尾的空白字符，同一 `dict_type` 下不允许出现重复的 `value`。
 - 字典列表按 `value` 的字符串顺序排列；例如 `"10"` 会排在 `"2"` 前面。
 
+## 评论接口说明
+
+- 评论写入时会同步保存七牛文本审核建议 `qiniuSuggestion`，取值为 `pass`、`review` 或 `block`。
+- `pass` 入库并直接发布（`status=1`）；`review` 入库等待人工审核（`status=0`，前台不可见）；`block` 拒绝提交且不入库。
+- 未配置七牛时沿用原有放行策略，并记录为 `pass`。
+- 历史评论统一迁移为 `pass`，后台列表的 `search` 支持按 `qiniuSuggestion` 精确筛选。
+
 ## 用户管理接口说明
 
 - 所有用户管理接口都需要 Bearer Token，且数据库中的当前用户必须为 `admin=1`。

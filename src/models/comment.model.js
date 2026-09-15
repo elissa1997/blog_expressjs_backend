@@ -37,6 +37,10 @@ function buildSearchWhere(search, options = {}) {
     where.email = { contains: search.email };
   }
 
+  if (search.qiniuSuggestion) {
+    where.qiniuSuggestion = search.qiniuSuggestion;
+  }
+
   const contentKeyword = search.content || search.text;
   if (includeContent && contentKeyword) {
     where.text = { contains: contentKeyword };
@@ -64,8 +68,9 @@ async function add(payload) {
       url: payload.url || null,
       ip: payload.ip || '127.0.0.1',
       text: payload.text || null,
-      status: 1,
+      status: payload.qiniuSuggestion === 'review' ? 0 : 1,
       agent: payload.agent || 'unknow',
+      qiniuSuggestion: payload.qiniuSuggestion || 'pass',
       updatedAt: new Date()
     }
   });

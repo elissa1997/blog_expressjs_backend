@@ -37,6 +37,7 @@
 | createdAt | DateTime | 否 | 是 | now() | 创建时间 |
 | updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
 | agent | String | 否 | 是 | "unknow" | UA |
+| qiniuSuggestion | String(@db.VarChar(16)) | 否 | 是 | "pass" | 七牛文本审核结果（pass/review/block） |
 
 索引与关系：
 - 索引：`@@index([a_id], map: "comment_a_id_fkey")`

@@ -10,16 +10,18 @@ async function qiniuCommentReviewMiddleware(req, res, next) {
 
     const result = await reviewText(text);
     if (result.skipped) {
+      req.qiniuSuggestion = 'pass';
       return next();
     }
 
     const suggestion = pickSuggestion(result);
+    req.qiniuSuggestion = suggestion;
     if (suggestion === 'pass') {
       return next();
     }
 
     if (suggestion === 'review') {
-      return res.fail('评论包含敏感内容，待审核后发布', 403, { suggestion });
+      return next();
     }
 
     return res.fail('评论包含违规内容，发布失败', 403, {
