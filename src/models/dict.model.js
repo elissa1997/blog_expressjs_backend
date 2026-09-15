@@ -19,7 +19,7 @@ async function add(payload) {
     data: {
       dict_type: payload.dict_type,
       name: payload.name,
-      value: Number.parseInt(payload.value, 10),
+      value: payload.value,
       updatedAt: new Date()
     }
   });
@@ -137,7 +137,7 @@ async function update(payload) {
       data: {
         dict_type: payload.dict_type,
         name: payload.name,
-        value: Number.parseInt(payload.value, 10),
+        value: payload.value,
         updatedAt: new Date()
       }
     });

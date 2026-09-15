@@ -49,7 +49,7 @@
 | id | Int | 是 | 是 | autoincrement() | 字典项 ID |
 | dict_type | String | 否 | 是 | "unknow" | 字典分组 |
 | name | String | 否 | 是 | "unknow" | 展示名称 |
-| value | Int | 否 | 是 | 0 | 数值 |
+| value | String(@db.VarChar(191)) | 否 | 是 | "0" | 字典值（字符串） |
 | createdAt | DateTime | 否 | 是 | now() | 创建时间 |
 | updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
 

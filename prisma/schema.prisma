@@ -44,7 +44,7 @@ model dict {
   id        Int      @id @default(autoincrement())
   dict_type String   @default("unknow")
   name      String   @default("unknow")
-  value     Int      @default(0)
+  value     String   @default("0") @db.VarChar(191)
   createdAt DateTime @default(now())
   updatedAt DateTime
 }

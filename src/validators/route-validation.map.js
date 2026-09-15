@@ -188,7 +188,7 @@ const routeValidationMap = {
     fields: [
       { name: 'dict_type', type: 'string', required: true },
       { name: 'name', type: 'string', required: true },
-      { name: 'value', type: 'int', required: true }
+      { name: 'value', type: 'string', required: true, minLength: 1, maxLength: 191 }
     ]
   },
   'POST /dict/update': {
@@ -201,7 +201,7 @@ const routeValidationMap = {
           { name: 'id', type: 'int', required: true },
           { name: 'dict_type', type: 'string', required: true },
           { name: 'name', type: 'string', required: true },
-          { name: 'value', type: 'int', required: true }
+          { name: 'value', type: 'string', required: true, minLength: 1, maxLength: 191 }
         ]
       },
       {

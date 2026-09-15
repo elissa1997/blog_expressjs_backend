@@ -18,7 +18,7 @@ function parseSearch(search) {
 }
 
 async function add(payload) {
-  const value = Number.parseInt(payload.value, 10);
+  const value = payload.value.trim();
   const existed = await dictModel.findByType({
     dict_type: payload.dict_type,
     value,
@@ -33,7 +33,7 @@ async function add(payload) {
     throw error;
   }
 
-  return dictModel.add(payload);
+  return dictModel.add({ ...payload, value });
 }
 
 async function list(query) {
@@ -60,7 +60,7 @@ async function update(payload) {
 
   if (hasId) {
     const id = Number.parseInt(payload.id, 10);
-    const value = Number.parseInt(payload.value, 10);
+    const value = payload.value.trim();
 
     const existing = await dictModel.findOneById(id);
     if (!existing) {
