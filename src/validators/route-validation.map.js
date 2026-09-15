@@ -60,8 +60,8 @@ const routeValidationMap = {
       { name: 'title', type: 'string', required: true },
       { name: 'content', type: 'string', required: true },
       { name: 'cover', type: 'string', required: false },
-      { name: 'category', type: 'int', required: false },
-      { name: 'status', type: 'int', required: false }
+      { name: 'category', type: 'string', required: false, minLength: 1, maxLength: 191 },
+      { name: 'status', type: 'string', required: false, minLength: 1, maxLength: 191 }
     ]
   },
   'POST /article/update': {
@@ -71,8 +71,8 @@ const routeValidationMap = {
       { name: 'title', type: 'string', required: false },
       { name: 'content', type: 'string', required: false },
       { name: 'cover', type: 'string', required: false },
-      { name: 'category', type: 'int', required: false },
-      { name: 'status', type: 'int', required: false }
+      { name: 'category', type: 'string', required: false, minLength: 1, maxLength: 191 },
+      { name: 'status', type: 'string', required: false, minLength: 1, maxLength: 191 }
     ]
   },
   'POST /article/delete': {
@@ -115,7 +115,7 @@ const routeValidationMap = {
     source: 'body',
     fields: [
       { name: 'id', type: 'int', required: true },
-      { name: 'status', type: 'int', required: true }
+      { name: 'status', type: 'string', required: true, minLength: 1, maxLength: 191 }
     ]
   },
   'POST /friendlink/add': {
@@ -159,7 +159,7 @@ const routeValidationMap = {
         maxLength: 2048,
         typeMessage: 'url 必须为 https://主域名或二级域名/ 格式'
       },
-      { name: 'status', type: 'int', required: false, allowedValues: [0, 1, 2] },
+      { name: 'status', type: 'string', required: false, allowedValues: ['0', '1', '2'] },
       { name: 'sort', type: 'int', required: false }
     ]
   },

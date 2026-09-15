@@ -8,11 +8,11 @@ function buildSearchWhere(search) {
   }
 
   if (search.category !== undefined && search.category !== null && search.category !== '') {
-    where.category = Number.parseInt(search.category, 10);
+    where.category = search.category.trim();
   }
 
   if (search.status !== undefined && search.status !== null && search.status !== '') {
-    where.status = Number.parseInt(search.status, 10);
+    where.status = search.status.trim();
   }
 
   return where;
@@ -63,8 +63,8 @@ async function add(payload) {
   const title = payload.title;
   const cover = payload.cover || null;
   const content = payload.content;
-  const category = Number.parseInt(payload.category, 10);
-  const status = Number.parseInt(payload.status, 10);
+  const category = payload.category ? payload.category.trim() : '0';
+  const status = payload.status ? payload.status.trim() : '0';
 
   const created = await prisma.article.create({
     data: {
@@ -96,11 +96,11 @@ async function update(payload) {
   }
 
   if (payload.category !== undefined) {
-    data.category = Number.parseInt(payload.category, 10);
+    data.category = payload.category.trim();
   }
 
   if (payload.status !== undefined) {
-    data.status = Number.parseInt(payload.status, 10);
+    data.status = payload.status.trim();
   }
 
   if (Object.keys(data).length === 0) {

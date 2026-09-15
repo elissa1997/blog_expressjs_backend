@@ -12,8 +12,8 @@ model article {
   title     String    @default("unknow")
   cover     String?
   content   String    @db.Text
-  category  Int       @default(0)
-  status    Int       @default(0)
+  category  String    @default("0") @db.VarChar(191)
+  status    String    @default("0") @db.VarChar(191)
   createdAt DateTime  @default(now())
   updatedAt DateTime
   comment   comment[]
@@ -29,7 +29,7 @@ model comment {
   url       String?
   ip        String   @default("127.0.0.1")
   text      String?  @db.Text
-  status    Int      @default(0)
+  status    String   @default("0") @db.VarChar(191)
   createdAt DateTime @default(now())
   updatedAt DateTime
   agent     String   @default("unknow")
@@ -65,7 +65,7 @@ model friendlink {
   name            String   @db.VarChar(100)
   url             String   @db.VarChar(2048)
   urlHash         String   @unique @db.Char(64)
-  status          Int      @default(0)
+  status          String   @default("0") @db.VarChar(191)
   qiniuSuggestion String   @db.VarChar(16)
   sort            Int      @default(0)
   ip              String   @default("127.0.0.1") @db.VarChar(45)

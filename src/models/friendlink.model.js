@@ -17,8 +17,14 @@ function buildAdminWhere(search) {
   if (search.name) where.name = { contains: search.name };
   if (search.url) where.url = { contains: search.url };
 
-  const status = Number.parseInt(search.status, 10);
-  if (!Number.isNaN(status)) where.status = status;
+  if (search.status !== undefined && search.status !== null && search.status !== '') {
+    if (typeof search.status !== 'string') {
+      const error = new Error('search.status 类型必须为 string');
+      error.status = 400;
+      throw error;
+    }
+    where.status = search.status.trim();
+  }
   if (search.qiniuSuggestion) where.qiniuSuggestion = search.qiniuSuggestion;
   return where;
 }
@@ -37,7 +43,7 @@ async function add(data) {
 
 async function list(query) {
   const { offset, limits } = parsePagination(query);
-  const where = { status: 1 };
+  const where = { status: '1' };
   const [total, list] = await Promise.all([
     prisma.friendlink.count({ where }),
     prisma.friendlink.findMany({

@@ -11,8 +11,17 @@ function parseSearch(search) {
   }
 
   try {
-    return JSON.parse(search);
+    const parsed = JSON.parse(search);
+    if (parsed.status !== undefined && typeof parsed.status !== 'string') {
+      const error = new Error('search.status 类型必须为 string');
+      error.status = 400;
+      throw error;
+    }
+    return parsed;
   } catch (err) {
+    if (err && err.status === 400) {
+      throw err;
+    }
     const error = new Error('search 参数格式错误');
     error.status = 400;
     throw error;

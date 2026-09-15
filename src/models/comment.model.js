@@ -26,7 +26,7 @@ function buildSearchWhere(search, options = {}) {
   }
 
   if (search.status !== undefined && search.status !== null && search.status !== '') {
-    where.status = Number.parseInt(search.status, 10);
+    where.status = search.status.trim();
   }
 
   if (search.user_name) {
@@ -68,7 +68,7 @@ async function add(payload) {
       url: payload.url || null,
       ip: payload.ip || '127.0.0.1',
       text: payload.text || null,
-      status: payload.qiniuSuggestion === 'review' ? 0 : 1,
+      status: payload.qiniuSuggestion === 'review' ? '0' : '1',
       agent: payload.agent || 'unknow',
       qiniuSuggestion: payload.qiniuSuggestion || 'pass',
       updatedAt: new Date()
@@ -86,7 +86,7 @@ async function collectTreeIds(rootIds) {
     const children = await prisma.comment.findMany({
       where: {
         parent_id: { in: parentIds },
-        status: 1
+        status: '1'
       },
       select: { id: true }
     });
@@ -113,7 +113,7 @@ async function fetchTreeListByRootIds(rootIds) {
   return prisma.comment.findMany({
     where: {
       id: { in: treeIds },
-      status: 1
+      status: '1'
     },
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }]
   });
@@ -125,7 +125,7 @@ async function list(query) {
   const where = {
     a_id: articleId,
     parent_id: null,
-    status: 1
+    status: '1'
   };
 
   const [total, roots] = await Promise.all([
@@ -182,7 +182,7 @@ async function update(payload) {
   const data = {};
 
   if (payload.status !== undefined) {
-    data.status = Number.parseInt(payload.status, 10);
+    data.status = payload.status.trim();
   }
 
   if (Object.keys(data).length === 0) {

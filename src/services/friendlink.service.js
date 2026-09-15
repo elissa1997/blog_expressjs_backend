@@ -36,7 +36,7 @@ async function add(payload) {
       name,
       url,
       urlHash,
-      status: 0,
+      status: '0',
       qiniuSuggestion,
       sort: 0,
       ip: payload.ip || '127.0.0.1',
@@ -68,8 +68,8 @@ async function update(payload) {
   const data = {};
   if (payload.name !== undefined) data.name = normalizeName(payload.name);
   if (payload.status !== undefined) {
-    const status = Number.parseInt(payload.status, 10);
-    if (![0, 1, 2].includes(status)) throw createError('友情链接状态不正确', 400);
+    const status = payload.status.trim();
+    if (!['0', '1', '2'].includes(status)) throw createError('友情链接状态不正确', 400);
     data.status = status;
   }
   if (payload.sort !== undefined) {

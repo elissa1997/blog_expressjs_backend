@@ -12,8 +12,8 @@
 | title | String | 否 | 是 | "unknow" | 标题 |
 | cover | String? | 否 | 否 | 无 | 封面 URL |
 | content | String(@db.Text) | 否 | 是 | 无 | 内容 |
-| category | Int | 否 | 是 | 0 | 分类 |
-| status | Int | 否 | 是 | 0 | 状态 |
+| category | String(@db.VarChar(191)) | 否 | 是 | "0" | 分类字典值 |
+| status | String(@db.VarChar(191)) | 否 | 是 | "0" | 状态字典值 |
 | createdAt | DateTime | 否 | 是 | now() | 创建时间 |
 | updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
 
@@ -33,7 +33,7 @@
 | url | String? | 否 | 否 | 无 | URL |
 | ip | String | 否 | 是 | "127.0.0.1" | IP |
 | text | String?(@db.Text) | 否 | 否 | 无 | 评论内容 |
-| status | Int | 否 | 是 | 0 | 状态 |
+| status | String(@db.VarChar(191)) | 否 | 是 | "0" | 状态字典值 |
 | createdAt | DateTime | 否 | 是 | now() | 创建时间 |
 | updatedAt | DateTime | 否 | 是 | 无 | 更新时间 |
 | agent | String | 否 | 是 | "unknow" | UA |
@@ -76,7 +76,7 @@
 | name | String(@db.VarChar(100)) | 否 | 是 | 无 | 站点名称 |
 | url | String(@db.VarChar(2048)) | 否 | 是 | 无 | 规范化后的站点 URL |
 | urlHash | String(@db.Char(64)) | 否 | 是 | 无 | URL SHA-256 唯一摘要 |
-| status | Int | 否 | 是 | 0 | 0 待审核、1 已通过、2 已拒绝 |
+| status | String(@db.VarChar(191)) | 否 | 是 | "0" | "0" 待审核、"1" 已通过、"2" 已拒绝 |
 | qiniuSuggestion | String(@db.VarChar(16)) | 否 | 是 | 无 | 七牛文本审核结果 |
 | sort | Int | 否 | 是 | 0 | 展示排序，数值越大越靠前 |
 | ip | String(@db.VarChar(45)) | 否 | 是 | "127.0.0.1" | 提交者 IP |
